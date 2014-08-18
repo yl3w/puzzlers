@@ -91,4 +91,19 @@ public class MathQuizTest {
     Assert.assertTrue(solution.isSatisfied());
     Assert.assertEquals(solution.print(), "3^2=9");
   }
+
+  @Test
+  public void testRealLongInput() {
+    MathQuiz mq = new MathQuiz(new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2,
+        3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6,
+        7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0,
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4,
+        5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8 }, 0, 9, new char[0]);
+    MathQuiz solution = mq.solve();
+    Assert.assertTrue(solution.isSatisfied());
+    Assert
+        .assertEquals(
+            solution.print(),
+            "0+1+2+3+4+5+6+7+8+9+0+1+2+3+4+5+6+7+8+9+0+1+2+3+4+5+6+7+8+9+0+1+2+3+4+5+6+7+8+9+0+1+2+3+4+5+6+7+8+9+0+1+2+3+4+5+6+7+8+9+0+1+2+3+4+5+6+7+8+9+0+1+2+3+4+5+6+7+8+9+0+1+2+3+4+5+6+7+8+9+0+1/2+3+4/5/6/7+8=9");
+  }
 }
