@@ -75,14 +75,14 @@ public class MathQuiz {
       for (int i = 0; i < lines; i++) {
         String[] line = br.readLine().split("\\s");
         int count = Integer.parseInt(line[0]);
-        int acc = Integer.parseInt(line[1]);
+        int initial = Integer.parseInt(line[1]);
         int result = Integer.parseInt(line[line.length - 1]);
-        int[] nos = new int[count - 2];
-        for (int j = 0; j < count - 2; j++) {
-          nos[i] = Integer.parseInt(line[j + 2]);
+        int[] nos = new int[count - 1];
+        for (int j = 0; j < count - 1; j++) {
+          nos[j] = Integer.parseInt(line[j + 2]);
         }
-        MathQuiz mq = new MathQuiz(nos, acc, result, new char[0]);
-        System.out.println(mq.solve().isSatisfied());
+        MathQuiz mq = new MathQuiz(nos, initial, result, new char[0]);
+        System.out.println(mq.solve());
       }
     } catch (NumberFormatException | IOException e) {
       System.out.println("Unable to read from console, exiting");
