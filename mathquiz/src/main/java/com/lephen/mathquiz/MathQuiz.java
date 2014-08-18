@@ -5,47 +5,79 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.function.IntBinaryOperator;
 
-public class MathQuiz {
+class Operator {
+  final char op;
+  final IntBinaryOperator func;
 
-  enum Operator {
-    Addition('+', (a, b) -> a + b), Substraction('-', (a, b) -> a - b), Multiplication(
-        '*', (a, b) -> a * b), Division('/', (a, b) -> {
-      if (a % b != 0)
-        throw new UnsupportedOperationException(
-            "Division results in non-zero remainder");
-      if (b == 0)
-        throw new UnsupportedOperationException("Division by zero");
-      return a / b;
-    });
-    final char op;
-    final IntBinaryOperator func;
+  Operator(char op, IntBinaryOperator func) {
+    this.op = op;
+    this.func = func;
+  }
 
-    Operator(char op, IntBinaryOperator func) {
-      this.op = op;
-      this.func = func;
+  public MathQuiz apply(MathQuiz mathQuiz) {
+    int newacc;
+    try {
+      newacc = func.applyAsInt(mathQuiz.acc, mathQuiz.nos[mathQuiz.ops.length]);
+    } catch (UnsupportedOperationException ex) {
+      return MathQuiz.NO_RESULT;
     }
+    return mathQuiz.step(newacc, this);
+  }
 
-    public MathQuiz apply(MathQuiz mathQuiz) {
-      int newacc;
-      try {
-        newacc = func.applyAsInt(mathQuiz.acc,
-            mathQuiz.nos[mathQuiz.ops.length]);
-      } catch (UnsupportedOperationException ex) {
-        return NO_RESULT;
-      }
-      return mathQuiz.step(newacc, this);
+  private static final class Addition extends Operator {
+    Addition() {
+      super('+', (a, b) -> a + b);
     }
   }
 
-  private static final MathQuiz NO_RESULT = new MathQuiz(new int[0], 0, -1,
+  private static final class Substraction extends Operator {
+    Substraction() {
+      super('-', (a, b) -> a - b);
+    }
+  }
+
+  private static final class Multiplication extends Operator {
+    Multiplication() {
+      super('*', (a, b) -> a * b);
+    }
+  }
+
+  private static final class Division extends Operator {
+    Division() {
+      super('/', (a, b) -> {
+        if (a % b != 0)
+          throw new UnsupportedOperationException(
+              "Division results in non-zero remainder");
+        if (b == 0)
+          throw new UnsupportedOperationException("Division by zero");
+        return a / b;
+      });
+    }
+  }
+
+  public static final Operator ADDITION = new Addition();
+  public static final Operator SUBSTRACTION = new Substraction();
+  public static final Operator MULTIPLICATION = new Multiplication();
+  public static final Operator DIVISION = new Division();
+  public static final Operator[] VALUES = new Operator[] { ADDITION,
+      SUBSTRACTION, MULTIPLICATION, DIVISION };
+
+  public static Operator[] values() {
+    return VALUES;
+  }
+}
+
+public class MathQuiz {
+
+  public static final MathQuiz NO_RESULT = new MathQuiz(new int[0], 0, -1,
       new char[0]);
 
-  private final int[] nos;
-  private final int initial;
-  private final int result;
-  private final int acc;
-  private final char[] ops;
-  private final Operator[] precedence;
+  public final int[] nos;
+  public final int initial;
+  public final int result;
+  public final int acc;
+  public final char[] ops;
+  public final Operator[] precedence;
 
   MathQuiz(int[] nos, int initial, int result, char[] ops) {
     this(nos, initial, result, ops, Operator.values());

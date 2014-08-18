@@ -3,8 +3,6 @@ package com.lephen.mathquiz;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.lephen.mathquiz.MathQuiz.Operator;
-
 public class MathQuizTest {
 
   @Test
@@ -43,7 +41,7 @@ public class MathQuizTest {
   @Test
   public void testWithLimitedOperators() {
     MathQuiz mq = new MathQuiz(new int[] { 2, 5, 1, 2 }, 12, 4, new char[0],
-        new Operator[] { Operator.Substraction, Operator.Addition });
+        new Operator[] { Operator.SUBSTRACTION, Operator.ADDITION });
     MathQuiz solution = mq.solve();
     Assert.assertTrue(solution.isSatisfied());
     Assert.assertEquals(solution.print(), "12-2-5+1-2=4");
@@ -52,8 +50,8 @@ public class MathQuizTest {
   @Test
   public void testWithoutAddition() {
     MathQuiz mq = new MathQuiz(new int[] { 2, 5, 1, 2 }, 12, 4, new char[0],
-        new Operator[] { Operator.Substraction, Operator.Multiplication,
-            Operator.Division });
+        new Operator[] { Operator.SUBSTRACTION, Operator.MULTIPLICATION,
+            Operator.DIVISION });
     MathQuiz solution = mq.solve();
     Assert.assertTrue(solution.isSatisfied());
     Assert.assertEquals(solution.print(), "12-2/5*1*2=4");
@@ -62,9 +60,35 @@ public class MathQuizTest {
   @Test
   public void testWithoutSubstraction() {
     MathQuiz mq = new MathQuiz(new int[] { 2, 5, 1, 2 }, 12, 4, new char[0],
-        new Operator[] { Operator.Addition, Operator.Multiplication,
-            Operator.Division });
+        new Operator[] { Operator.ADDITION, Operator.MULTIPLICATION,
+            Operator.DIVISION });
     MathQuiz solution = mq.solve();
     Assert.assertFalse(solution.isSatisfied());
+  }
+
+  // / TESTING OPERATOR EXTENSIBILITY
+  public class Power extends Operator {
+
+    Power() {
+      super('^', (a, b) -> {
+        if (b < 0)
+          throw new UnsupportedOperationException(
+              "Cannot perform powers to negative numbers");
+        if (b == 0)
+          return 1;
+
+        return (int) Math.pow(a, b);
+      });
+    }
+  }
+
+  @Test
+  public void testCustomOperators() {
+    MathQuiz mq = new MathQuiz(new int[] { 2 }, 3, 9, new char[0],
+        new Operator[] { Operator.ADDITION, Operator.SUBSTRACTION,
+            Operator.MULTIPLICATION, Operator.DIVISION, new Power() });
+    MathQuiz solution = mq.solve();
+    Assert.assertTrue(solution.isSatisfied());
+    Assert.assertEquals(solution.print(), "3^2=9");
   }
 }
