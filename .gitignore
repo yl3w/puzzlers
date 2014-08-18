@@ -4,3 +4,5 @@ classes/
 .settings
 .classpath
 .java-version
+test-classes/
+mathquiz/target/
