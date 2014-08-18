@@ -18,6 +18,10 @@ class Operator {
     int newacc;
     try {
       newacc = func.applyAsInt(mathQuiz.acc, mathQuiz.nos[mathQuiz.ops.length]);
+
+      if (newacc < -32000 || newacc > 32000) {
+        return MathQuiz.NO_RESULT;
+      }
     } catch (UnsupportedOperationException ex) {
       return MathQuiz.NO_RESULT;
     }
