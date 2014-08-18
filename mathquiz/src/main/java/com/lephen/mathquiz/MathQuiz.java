@@ -7,7 +7,7 @@ import java.util.function.IntBinaryOperator;
 
 public class MathQuiz {
 
-  private enum Operator {
+  enum Operator {
     Addition('+', (a, b) -> a + b), Substraction('-', (a, b) -> a - b), Multiplication(
         '*', (a, b) -> a * b), Division('/', (a, b) -> {
       if (a % b != 0)
@@ -45,27 +45,31 @@ public class MathQuiz {
   private final int result;
   private final int acc;
   private final char[] ops;
+  private final Operator[] precedence;
 
   MathQuiz(int[] nos, int initial, int result, char[] ops) {
-    this.nos = nos;
-    this.result = result;
-    this.acc = this.initial = initial;
-    this.ops = ops;
+    this(nos, initial, result, ops, Operator.values());
   }
 
-  private MathQuiz(int[] nos, int initial, int acc, int result, char[] ops) {
+  MathQuiz(int[] nos, int initial, int result, char[] ops, Operator[] precedence) {
+    this(nos, initial, initial, result, ops, precedence);
+  }
+
+  private MathQuiz(int[] nos, int initial, int acc, int result, char[] ops,
+      Operator[] precedence) {
     this.nos = nos;
     this.result = result;
     this.initial = initial;
     this.acc = acc;
     this.ops = ops;
+    this.precedence = precedence;
   }
 
   public MathQuiz step(int acc, Operator operator) {
     char[] newops = new char[ops.length + 1];
     System.arraycopy(ops, 0, newops, 0, ops.length);
     newops[newops.length - 1] = operator.op;
-    return new MathQuiz(nos, this.initial, acc, result, newops);
+    return new MathQuiz(nos, this.initial, acc, result, newops, precedence);
   }
 
   public static void main(String[] args) {
@@ -90,8 +94,7 @@ public class MathQuiz {
     }
   }
 
-  @Override
-  public String toString() {
+  public String print() {
     if (!isSatisfied()) {
       return "NO EXPRESSION";
     }
@@ -122,7 +125,7 @@ public class MathQuiz {
       return NO_RESULT;
     }
 
-    for (Operator op : Operator.values()) {
+    for (Operator op : precedence) {
       MathQuiz next = op.apply(this).solve();
       if (next.isSatisfied()) {
         return next;
